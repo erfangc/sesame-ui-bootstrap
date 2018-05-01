@@ -4,41 +4,52 @@ import {JSONSchema6} from 'json-schema';
 import axios from 'axios';
 import {apiRoot} from '../index';
 
-interface State {
-    schema?: JSONSchema6
+interface Props {
+    id: number
 }
 
-export class CorpusEditor extends React.Component<{}, State> {
+interface State {
+    schema?: JSONSchema6
+    formData?: any
+}
 
-    constructor(props: {}) {
+export class CorpusEditor extends React.Component<Props, State> {
+
+    constructor(props: Props) {
         super(props);
         this.state = {};
     }
 
-    componentWillMount(): void {
+    public componentWillMount(): void {
         axios
             .get<JSONSchema6>(`${apiRoot}/profile/corpuses`, {headers: {accept: 'application/schema+json'}})
-            .then(resp => {
+            .then(({data}) => {
                 /*
                 remove unnecessary fields, maybe there are gentler ways to do this ...
                 in the entity model itself
                  */
-                if (resp.data.properties) {
-                    delete resp.data.properties['nerModels'];
-                    delete resp.data.properties['userID'];
-                    delete resp.data.properties['id'];
+                if (data.properties) {
+                    delete data.properties.nerModels;
+                    delete data.properties.userID;
                 }
-                this.setState({schema: resp.data});
+                this.setState({schema: data});
             });
+        const {id} = this.props;
+        if (id !== undefined) {
+            axios
+                .get(`${apiRoot}/corpuses/${id}`)
+                .then(resp => this.setState({formData: resp.data}));
+        }
     }
 
-    render(): React.ReactNode {
-        const {schema} = this.state;
+    public render(): React.ReactNode {
+        const {schema, formData} = this.state;
         if (!schema) {
             return null;
         }
         return <Form
             schema={schema}
+            formData={formData}
             uiSchema={
                 {
                     'ui:order': ['title', 'entityConfigurations'],

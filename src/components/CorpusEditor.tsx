@@ -18,7 +18,18 @@ export class CorpusEditor extends React.Component<{}, State> {
     componentWillMount(): void {
         axios
             .get<JSONSchema6>(`${apiRoot}/profile/corpuses`, {headers: {accept: 'application/schema+json'}})
-            .then(resp => this.setState({schema: resp.data}));
+            .then(resp => {
+                /*
+                remove unnecessary fields, maybe there are gentler ways to do this ...
+                in the entity model itself
+                 */
+                if (resp.data.properties) {
+                    delete resp.data.properties['nerModels'];
+                    delete resp.data.properties['userID'];
+                    delete resp.data.properties['id'];
+                }
+                this.setState({schema: resp.data});
+            });
     }
 
     render(): React.ReactNode {
@@ -26,7 +37,14 @@ export class CorpusEditor extends React.Component<{}, State> {
         if (!schema) {
             return null;
         }
-        return <Form schema={schema}/>;
+        return <Form
+            schema={schema}
+            uiSchema={
+                {
+                    'ui:order': ['title', 'entityConfigurations']
+                }
+            }
+        />;
     }
 
 }

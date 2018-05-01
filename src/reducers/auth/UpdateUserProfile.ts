@@ -3,7 +3,8 @@ import {UserProfile} from './authReducer';
 
 type UpdateUserProfile = 'UpdateUserProfile';
 export const UpdateUserProfile: UpdateUserProfile = 'UpdateUserProfile';
-export interface UpdateUserProfileAction extends Action<UserProfile>{
+
+export interface UpdateUserProfileAction extends Action<UserProfile> {
     type: UpdateUserProfile
 }
 

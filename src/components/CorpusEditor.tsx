@@ -41,7 +41,12 @@ export class CorpusEditor extends React.Component<{}, State> {
             schema={schema}
             uiSchema={
                 {
-                    'ui:order': ['title', 'entityConfigurations']
+                    'ui:order': ['title', 'entityConfigurations'],
+                    'entityConfigurations': {
+                        items: {
+                            'ui:order': ['type', 'displayName', 'color', 'textColor']
+                        }
+                    }
                 }
             }
         />;

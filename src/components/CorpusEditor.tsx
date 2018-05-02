@@ -55,7 +55,13 @@ export class CorpusEditor extends React.Component<Props, State> {
                     'ui:order': ['title', 'entityConfigurations'],
                     'entityConfigurations': {
                         items: {
-                            'ui:order': ['type', 'displayName', 'color', 'textColor']
+                            'ui:order': ['type', 'displayName', 'color', 'textColor'],
+                            'color': {
+                                'ui:widget': 'color'
+                            },
+                            'textColor': {
+                                'ui:widget': 'color'
+                            }
                         }
                     }
                 }

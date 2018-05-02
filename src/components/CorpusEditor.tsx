@@ -1,17 +1,33 @@
-import Form from 'react-jsonschema-form';
+import Form, {IChangeEvent} from 'react-jsonschema-form';
 import * as React from 'react';
 import {JSONSchema6} from 'json-schema';
 import axios from 'axios';
 import {apiRoot} from '../index';
+import {history} from '../History';
 
 interface Props {
-    id: number
+    self: string
 }
 
 interface State {
     schema?: JSONSchema6
     formData?: any
 }
+
+const uiSchema = {
+    'ui:order': ['title', 'entityConfigurations'],
+    'entityConfigurations': {
+        items: {
+            'ui:order': ['type', 'displayName', 'color', 'textColor'],
+            'color': {
+                'ui:widget': 'color'
+            },
+            'textColor': {
+                'ui:widget': 'color'
+            }
+        }
+    }
+};
 
 export class CorpusEditor extends React.Component<Props, State> {
 
@@ -34,10 +50,10 @@ export class CorpusEditor extends React.Component<Props, State> {
                 }
                 this.setState({schema: data});
             });
-        const {id} = this.props;
-        if (id !== undefined) {
+        const {self} = this.props;
+        if (self !== undefined) {
             axios
-                .get(`${apiRoot}/corpuses/${id}`)
+                .get(self)
                 .then(resp => this.setState({formData: resp.data}));
         }
     }
@@ -47,26 +63,27 @@ export class CorpusEditor extends React.Component<Props, State> {
         if (!schema) {
             return null;
         }
-        return <Form
-            schema={schema}
-            formData={formData}
-            uiSchema={
-                {
-                    'ui:order': ['title', 'entityConfigurations'],
-                    'entityConfigurations': {
-                        items: {
-                            'ui:order': ['type', 'displayName', 'color', 'textColor'],
-                            'color': {
-                                'ui:widget': 'color'
-                            },
-                            'textColor': {
-                                'ui:widget': 'color'
-                            }
-                        }
-                    }
-                }
-            }
-        />;
+        return (
+            <Form
+                schema={schema}
+                formData={formData}
+                uiSchema={uiSchema}
+                onSubmit={this.onSubmit}
+            />
+        );
     }
+
+    private onSubmit = (e: IChangeEvent<any>) => {
+        const {self} = this.props;
+        if (self) {
+            axios
+                .put(self, e.formData)
+                .then(() => history.push('/workspace/corpuses'));
+        } else {
+            axios
+                .post(`${apiRoot}/corpuses`, e.formData)
+                .then(() => history.push('/workspace/corpuses'));
+        }
+    };
 
 }

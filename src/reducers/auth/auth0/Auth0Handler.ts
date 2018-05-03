@@ -3,6 +3,8 @@ import {Auth0DecodedHash} from 'auth0-js';
 import {authenticateSuccess} from '../AuthenticateSuccess';
 import {updateUserProfile} from '../UpdateUserProfile';
 import {history} from '../../../History';
+import {Store} from 'redux';
+import {StoreState} from '../../index';
 import {store} from '../../../index';
 
 export const AUTH_CONFIG = {
@@ -27,7 +29,7 @@ whenever the App loads, we could be in 1 or 3 situations
 2 - we were previous successfully authenticated: localStorage has an valid and non-expiring access_token / id_token
 3 - we are not authenticated at all (i.e. no authorization code in the URL and nothing (or invalid / expired) in localStorage
  */
-function initAuth() {
+export function initAuth(store: Store<StoreState>) {
     if (history.location.pathname === '/callback') {
         auth0Instance.parseHash((err, authResult) => {
             if (err) {
@@ -45,25 +47,21 @@ function initAuth() {
         });
     } else if (isAuthenticated()) {
         // using setTimeout as the store may not be initialized yet
-        setTimeout(() => {
-            const accessToken = localStorage.getItem('access_token');
-            const idToken = localStorage.getItem('id_token');
-            const expiresAt = localStorage.getItem('expires_at');
-            if (accessToken && idToken && expiresAt) {
-                store.dispatch(authenticateSuccess({
-                    accessToken: accessToken,
-                    expiresAt: expiresAt,
-                    idToken: idToken
-                }));
-            }
-            runPostAuthSequence(accessToken);
-        });
+        const accessToken = localStorage.getItem('access_token');
+        const idToken = localStorage.getItem('id_token');
+        const expiresAt = localStorage.getItem('expires_at');
+        if (accessToken && idToken && expiresAt) {
+            store.dispatch(authenticateSuccess({
+                accessToken: accessToken,
+                expiresAt: expiresAt,
+                idToken: idToken
+            }));
+        }
+        runPostAuthSequence(accessToken);
     } else {
-        // TODO in this case we should send the user directly to the authorization provider's login page instead of our own
+        history.push('/');
     }
 }
-
-initAuth();
 
 function runPostAuthSequence(accessToken: string | null) {
     if (accessToken != null) {
@@ -74,7 +72,6 @@ function runPostAuthSequence(accessToken: string | null) {
                     id: userInfo.sub,
                     nickname: userInfo.nickname
                 }));
-                // store.dispatch(uiInit());
             }
         });
     } else {

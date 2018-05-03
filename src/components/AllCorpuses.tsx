@@ -18,7 +18,7 @@ export class AllCorpuses extends React.Component<{}, State> {
 
     public componentDidMount(): void {
         axios
-            .get<RestResource<Corpus>>(`${apiRoot}/corpuses`)
+            .get<RestResource<Corpus>>(`${apiRoot}/api/v1/corpuses`)
             .then(({data: {_embedded}}) => this.setState({corpuses: _embedded.corpuses}));
     }
 
@@ -45,7 +45,7 @@ export class AllCorpuses extends React.Component<{}, State> {
                             <td>
                                 <button
                                     className={'btn btn-warning btn-sm'}
-                                    onClick={() => history.push(`/workspace/corpuses/edit?self=${href}`)}
+                                    onClick={() => history.push(`/workspace/corpuses/edit?href=${href}`)}
                                 >
                                     Edit
                                 </button>

@@ -4,10 +4,8 @@ import {JSONSchema6} from 'json-schema';
 import axios from 'axios';
 import {apiRoot} from '../index';
 import {history} from '../History';
-
-interface Props {
-    self: string
-}
+import {RouteProps} from 'react-router';
+import {parse} from 'querystring';
 
 interface State {
     schema?: JSONSchema6
@@ -29,16 +27,16 @@ const uiSchema = {
     }
 };
 
-export class CorpusEditor extends React.Component<Props, State> {
+export class CorpusEditor extends React.Component<RouteProps, State> {
 
-    constructor(props: Props) {
+    constructor(props: RouteProps) {
         super(props);
         this.state = {};
     }
 
     public componentWillMount(): void {
         axios
-            .get<JSONSchema6>(`${apiRoot}/profile/corpuses`, {headers: {accept: 'application/schema+json'}})
+            .get<JSONSchema6>(`${apiRoot}/api/v1/profile/corpuses`, {headers: {accept: 'application/schema+json'}})
             .then(({data}) => {
                 /*
                 remove unnecessary fields, maybe there are gentler ways to do this ...
@@ -50,11 +48,14 @@ export class CorpusEditor extends React.Component<Props, State> {
                 }
                 this.setState({schema: data});
             });
-        const {self} = this.props;
-        if (self !== undefined) {
-            axios
-                .get(self)
-                .then(resp => this.setState({formData: resp.data}));
+        const {location} = this.props;
+        if (location && location.search) {
+            const parsed = parse(location.search);
+            if (parsed['href'] || parsed['?href']) {
+                axios
+                    .get((parsed['href'] || parsed['?href']).toString())
+                    .then(resp => this.setState({formData: resp.data}));
+            }
         }
     }
 
@@ -74,11 +75,14 @@ export class CorpusEditor extends React.Component<Props, State> {
     }
 
     private onSubmit = (e: IChangeEvent<any>) => {
-        const {self} = this.props;
-        if (self) {
-            axios
-                .put(self, e.formData)
-                .then(() => history.push('/workspace/corpuses'));
+        const {location} = this.props;
+        if (location && location.search) {
+            const parsed = parse(location.search);
+            if (parsed['href'] || parsed['?href']) {
+                axios
+                    .put((parsed['href'] || parsed['?href']).toString(), e.formData)
+                    .then(() => history.push('/workspace/corpuses'));
+            }
         } else {
             axios
                 .post(`${apiRoot}/corpuses`, e.formData)

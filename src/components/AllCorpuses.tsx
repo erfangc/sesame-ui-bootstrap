@@ -17,6 +17,10 @@ export class AllCorpuses extends React.Component<{}, State> {
     }
 
     public componentDidMount(): void {
+        this.refresh();
+    }
+
+    private refresh() {
         axios
             .get<RestResource<Corpus>>(`${apiRoot}/api/v1/corpuses`)
             .then(({data: {_embedded}}) => this.setState({corpuses: _embedded.corpuses}));
@@ -28,33 +32,49 @@ export class AllCorpuses extends React.Component<{}, State> {
             return null;
         }
         return (
-            <table className="table">
-                <thead>
-                <tr>
-                    <th>Title</th>
-                    <th>User ID</th>
-                    <th/>
-                </tr>
-                </thead>
-                <tbody>
-                {
-                    corpuses.map(({id, userID, title, _links: {self: {href}}}) => (
-                        <tr key={id}>
-                            <td>{title}</td>
-                            <td>{userID}</td>
-                            <td>
-                                <button
-                                    className={'btn btn-warning btn-sm'}
-                                    onClick={() => history.push(`/workspace/corpuses/edit?href=${href}`)}
-                                >
-                                    Edit
-                                </button>
-                            </td>
-                        </tr>
-                    ))
-                }
-                </tbody>
-            </table>
+            <div>
+                <table className="table">
+                    <thead>
+                    <tr>
+                        <th>Title</th>
+                        <th>User ID</th>
+                        <th/>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {
+                        corpuses.map(({id, userID, title, _links: {self: {href}}}) => (
+                            <tr key={id}>
+                                <td>{title}</td>
+                                <td>{userID}</td>
+                                <td>
+                                    <button
+                                        className={'btn btn-warning btn-sm'}
+                                        onClick={() => history.push(`/workspace/corpuses/edit?href=${href}`)}
+                                    >
+                                        Edit
+                                    </button>
+                                </td>
+                                <td>
+                                    <button
+                                        className="btn btn-danger btn-sm"
+                                        onClick={() => axios.delete(href).then(() => this.refresh())}
+                                    >
+                                        Delete
+                                    </button>
+                                </td>
+                            </tr>
+                        ))
+                    }
+                    </tbody>
+                </table>
+                <button
+                    className="btn btn-success"
+                    onClick={() => history.push(`/workspace/corpuses/edit`)}
+                >
+                    Create
+                </button>
+            </div>
         );
     }
 }

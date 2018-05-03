@@ -85,7 +85,7 @@ export class CorpusEditor extends React.Component<RouteProps, State> {
             }
         } else {
             axios
-                .post(`${apiRoot}/corpuses`, e.formData)
+                .post(`${apiRoot}/api/v1/corpuses`, e.formData)
                 .then(() => history.push('/workspace/corpuses'));
         }
     };

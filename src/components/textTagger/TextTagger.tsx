@@ -195,7 +195,7 @@ export class TextTagger extends React.Component<Props, State> {
          */
         const {entityUnderEdit} = this.state;
         if (entityUnderEdit !== undefined && token.idx >= entityUnderEdit.start && token.idx <= entityUnderEdit.end) {
-            const entityConfig = entityConfigurations[entityUnderEdit.type];
+            const entityConfig = entityConfigurations.find(({type}) => type === entityUnderEdit.type);
             if (!entityConfig) {
                 return {
                     ...baseStyle,
@@ -222,7 +222,7 @@ export class TextTagger extends React.Component<Props, State> {
                     this code path means this token belongs to an entity and that entity is not being edited,
                     so its class is naturally that of the entity
                      */
-                    const entityConfiguration = entityConfigurations[resolvedEntity.type];
+                    const entityConfiguration = entityConfigurations.find(({type}) => type === resolvedEntity.type);
                     if (!entityConfiguration) {
                         return {
                             ...baseStyle,
@@ -289,15 +289,14 @@ export class TextTagger extends React.Component<Props, State> {
                         <div style={{position: 'fixed', zIndex: 1, top: menu.y + 10, left: menu.x}}>
                             <ul className={'dropdown-menu'} style={{display: 'inherit'}}>
                                 {
-                                    Object
-                                        .keys(entityConfigurations)
-                                        .filter(entity => entity !== 'unknown')
+                                    entityConfigurations
+                                        .filter(entity => entity.type !== 'unknown')
                                         .map(entity =>
                                             <li
-                                                key={entity}
-                                                onClick={() => this.confirmEdit(entity)}
+                                                key={entity.type}
+                                                onClick={() => this.confirmEdit(entity.type)}
                                             >
-                                                <a>{entityConfigurations[entity].displayName}</a>
+                                                <a>{entity.displayName}</a>
                                             </li>
                                         )
                                 }

@@ -6,6 +6,7 @@ import {history} from '../../../History';
 import {Store} from 'redux';
 import {StoreState} from '../../index';
 import {store} from '../../../index';
+import {actions} from '../../actions';
 
 export const AUTH_CONFIG = {
     domain: process.env.REACT_APP_DOMAIN as string,
@@ -72,6 +73,7 @@ function runPostAuthSequence(accessToken: string | null) {
                     id: userInfo.sub,
                     nickname: userInfo.nickname
                 }));
+                store.dispatch(actions.uiInit());
             }
         });
     } else {

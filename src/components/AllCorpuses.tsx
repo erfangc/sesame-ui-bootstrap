@@ -39,6 +39,7 @@ export class AllCorpuses extends React.Component<{}, State> {
                         <th>Title</th>
                         <th>User ID</th>
                         <th/>
+                        <th/>
                     </tr>
                     </thead>
                     <tbody>

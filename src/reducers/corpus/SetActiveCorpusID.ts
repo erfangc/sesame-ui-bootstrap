@@ -4,7 +4,7 @@ type SetActiveCorpusID = 'SetActiveCorpusID';
 export const SetActiveCorpusID: SetActiveCorpusID = 'SetActiveCorpusID';
 export interface SetActiveCorpusIDAction {
     type: SetActiveCorpusID
-    payload: string | undefined
+    payload: number | undefined
 }
 
-export const setActiveCorpusID = createAction<string | undefined>(SetActiveCorpusID);
+export const setActiveCorpusID = createAction<number | undefined>(SetActiveCorpusID);

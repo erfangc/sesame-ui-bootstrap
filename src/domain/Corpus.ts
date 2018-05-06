@@ -1,7 +1,7 @@
 import {EntityConfiguration} from './EntityConfiguration';
 
 export interface Corpus {
-    id: string
+    id: number
     title: string
     userID: string
     entityConfigurations: EntityConfiguration[]

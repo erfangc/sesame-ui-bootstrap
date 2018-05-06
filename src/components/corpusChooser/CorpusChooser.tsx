@@ -10,7 +10,7 @@ interface State {
 
 interface OwnProps {
     label?: string
-    corpusID?: string
+    corpusID?: number
     disabled?: boolean
     standalone?: boolean
     onChange: (corpusDescriptor: Corpus) => void
@@ -23,7 +23,7 @@ export class CorpusChooser extends React.Component<OwnProps, State> {
         this.state = {};
     }
 
-    componentDidMount(): void {
+    public componentDidMount(): void {
         axios
             .get<RestResource<Corpus>>(`${apiRoot}/api/v1/corpuses`)
             .then(({data}) => this.setState({corpusDescriptors: data._embedded.corpuses}));
@@ -44,11 +44,11 @@ export class CorpusChooser extends React.Component<OwnProps, State> {
         const formField = (
             <React.Fragment>
                 <label>{label || 'Corpus'}</label>
-                <select className="form-control" value={value} disabled={disabled}>
+                <select className="form-control" value={value} disabled={disabled} onChange={() => null}>
                     {
                         options
-                            .map(({value, text, key}) =>
-                                <option key={key} onClick={() => this.changeCorpus(value)}>{text}</option>
+                            .map(({value, text, key}, idx) =>
+                                <option key={idx} onClick={() => this.changeCorpus(value)}>{text}</option>
                             )
                     }
                 </select>
@@ -57,7 +57,7 @@ export class CorpusChooser extends React.Component<OwnProps, State> {
         return standalone ? (<form>{formField}</form>) : (formField);
     }
 
-    private changeCorpus = (value: string) => {
+    private changeCorpus = (value: number) => {
         const {onChange} = this.props;
         const {corpusDescriptors} = this.state;
         if (!corpusDescriptors) {

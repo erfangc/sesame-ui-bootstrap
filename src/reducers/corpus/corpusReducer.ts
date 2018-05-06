@@ -4,7 +4,7 @@ import {ReceivedCorpus, ReceivedCorpusAction} from './ReceivedCorpus';
 import {Corpus} from '../../domain/Corpus';
 
 export type CorpusStore = {
-    activeCorpusID?: string
+    activeCorpusID?: number
     corpusDescriptors: Corpus[]
 }
 const initialState: CorpusStore = {corpusDescriptors: []};

@@ -3,9 +3,10 @@ import {Route, Switch} from 'react-router';
 import {CorpusEditor} from '../CorpusEditor';
 import {Navbar} from './Navbar';
 import {AllCorpuses} from '../AllCorpuses';
-import {DocumentTagger} from '../documents/DocumentTagger';
+import {DocumentEditor} from '../documents/DocumentEditor';
 import {StoreState} from '../../reducers';
 import {connect} from 'react-redux';
+import {AllDocuments} from '../documents/AllDocuments';
 
 interface StateProps {
     appReady: boolean
@@ -28,7 +29,9 @@ export const Workspace = connect(mapStateToProps)(
                     <div className="container">
                         <Switch>
                             <Route path={'/workspace/corpuses/edit'} component={CorpusEditor}/>
-                            <Route path={'/workspace/documents/tagger'} component={DocumentTagger}/>
+                            <Route path={'/workspace/documents/edit/:id'} component={DocumentEditor}/>
+                            <Route path={'/workspace/documents/edit'} component={DocumentEditor}/>
+                            <Route path={'/workspace/documents'} component={AllDocuments}/>
                             <Route path={'/workspace/corpuses'} component={AllCorpuses}/>
                         </Switch>
                     </div>

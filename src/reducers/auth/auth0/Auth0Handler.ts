@@ -89,7 +89,7 @@ function runPostAuthSequence(accessToken: string | null) {
  * to persist states between active sessions of the app
  * @returns {boolean}
  */
-function isAuthenticated() {
+export function isAuthenticated() {
     /*
     check whether the current time is past the
     access token's expiry time

@@ -4,15 +4,13 @@
 export interface Document {
     id?: string
     content: string
-    corpus: string
-    createdOn: number
-    createdBy: string
-    createdByEmail: string
-    createdByNickname: string
-    lastModifiedOn: number
-    lastModifiedBy: string
-    lastModifiedByEmail: string
-    lastModifiedByNickname: string
+    corpusID: number
+    creatorID: string
+    creatorEmail: string
+    createdOn: string
+    lastModifiedOn: string
+    lastModifiedUserID: string
+    lastModifiedUserEmail: string
     entities?: TaggedEntity[]
 }
 

@@ -18,6 +18,11 @@ export class Navbar extends React.Component {
                             <li className={pathname.startsWith('/workspace/corpuses') ? 'active': ''}>
                                 <a onClick={() => history.push('/workspace/corpuses')}>Corpuses</a>
                             </li>
+                            <li className={pathname.startsWith('/workspace/nermodels') ? 'active': ''}>
+                                <a onClick={() => history.push('/workspace/nermodels')}>
+                                    Named Entity Models
+                                </a>
+                            </li>
                         </ul>
                     </div>
                 </div>

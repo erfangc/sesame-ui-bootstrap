@@ -7,6 +7,9 @@ import {DocumentEditor} from '../documents/DocumentEditor';
 import {StoreState} from '../../reducers';
 import {connect} from 'react-redux';
 import {AllDocuments} from '../documents/AllDocuments';
+import {NERModelEditor} from '../nerModels/NERModelEditor';
+import {AllNERModels} from '../nerModels/AllNERModels';
+import {RunNERModel} from '../nerModels/RunNERModel';
 
 interface StateProps {
     appReady: boolean
@@ -31,6 +34,9 @@ export const Workspace = connect(mapStateToProps)(
                             <Route path={'/workspace/corpuses/edit'} component={CorpusEditor}/>
                             <Route path={'/workspace/documents/edit/:id'} component={DocumentEditor}/>
                             <Route path={'/workspace/documents/edit'} component={DocumentEditor}/>
+                            <Route path={'/workspace/nermodels/edit'} component={NERModelEditor}/>
+                            <Route path={'/workspace/nermodels/run/:id'} component={RunNERModel}/>
+                            <Route path={'/workspace/nermodels'} component={AllNERModels}/>
                             <Route path={'/workspace/documents'} component={AllDocuments}/>
                             <Route path={'/workspace/corpuses'} component={AllCorpuses}/>
                         </Switch>

@@ -5,7 +5,7 @@ import axios from 'axios';
 import {DocumentContentEditor} from './DocumentContentEditor';
 import {Legend} from './Legend';
 import {StoreState} from '../../reducers';
-import {CorpusChooser} from '../corpusChooser/CorpusChooser';
+import {CorpusChooser} from '../corpus/corpusChooser/CorpusChooser';
 import {stripNERAnnotations} from '../../utils/NERUtils';
 import {Corpus} from '../../domain/Corpus';
 import {UserProfile} from '../../reducers/auth/authReducer';
@@ -197,7 +197,14 @@ export const DocumentEditor = connect(mapStateToProps, {...actions})(
             this.setState({loading: true});
             axios
                 .post(`${apiRoot}/api/v1/documents`, document)
-                .then(() => history.push('/workspace/documents'));
+                /*
+                set a timeout here because ... it takes about a second for Elasticsearch to receive and process DynamoDB Stream
+                yeah, we have a fairly strong consistency guarantee on the DynamoDB write side but not on the replication /read side
+                which is ok for most applications but not here ...
+
+                alternatively, we can 'stall' the user by asking them to navigate back manually?
+                 */
+                .then(() => setTimeout(() => history.push('/workspace/documents'), 1500));
         };
     }
 );

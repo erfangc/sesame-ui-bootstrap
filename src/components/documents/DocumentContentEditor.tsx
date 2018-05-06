@@ -20,7 +20,7 @@ export class DocumentContentEditor extends React.Component<Props, State> {
         };
     }
 
-    render(): React.ReactNode {
+    public render(): React.ReactNode {
         const {value, error} = this.state;
         return (
             <React.Fragment>

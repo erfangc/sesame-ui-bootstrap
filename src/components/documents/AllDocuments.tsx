@@ -1,7 +1,7 @@
 import * as React from 'react';
 import {Document} from '../../domain/Document';
 import {stripNERAnnotations} from '../../utils/NERUtils';
-import {CorpusChooser} from '../corpusChooser/CorpusChooser';
+import {CorpusChooser} from '../corpus/corpusChooser/CorpusChooser';
 import {Corpus} from '../../domain/Corpus';
 import {connect} from 'react-redux';
 import {StoreState} from '../../reducers';
@@ -51,12 +51,9 @@ export const AllDocuments = connect(mapStateToProps)(
 
             the delay is really on the millisecond level though but still
              */
-            setTimeout(() => {
-                    axios.get<Document[]>(`${apiRoot}/api/v1/documents/by-corpus/${corpusID}`)
-                        .then(resp => this.setState({documents: resp.data, loading: false}))
-                        .catch(() => this.setState({loading: false}));
-                },
-                1500);
+            axios.get<Document[]>(`${apiRoot}/api/v1/documents/by-corpus/${corpusID}`)
+                .then(resp => this.setState({documents: resp.data, loading: false}))
+                .catch(() => this.setState({loading: false}));
 
         }
 
@@ -129,8 +126,20 @@ export const AllDocuments = connect(mapStateToProps)(
             axios
                 .delete(`${apiRoot}/api/v1/documents/${id}`)
                 .then(() => {
-                    const {activeCorpusID} = this.state;
-                    this.refreshDocumentsForCorpusID(activeCorpusID);
+                    this.setState(prevState => {
+                        /*
+                        update local state so we see the document removed immediately
+                         */
+                        const {documents} = prevState;
+                        if (documents) {
+                            return {
+                                ...prevState,
+                                documents: documents.filter((doc) => doc.id !== id)
+                            };
+                        } else {
+                            return prevState;
+                        }
+                    });
                 });
         }
     }

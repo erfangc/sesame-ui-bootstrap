@@ -30,29 +30,7 @@ const unknownStyle = {
  */
 export class TextTagger extends React.Component<Props, State> {
 
-    getInitialState(props: Props) {
-        const {tokens, entities} = textToToken(props.annotatedText);
-        /*
-        populate colors
-         */
-        return {
-            entityUnderEdit: undefined,
-            menu: undefined,
-            entities,
-            tokens
-        };
-    }
-
-    constructor(props: Props) {
-        super(props);
-        this.state = this.getInitialState(props);
-    }
-
-    componentWillReceiveProps(nextProps: Readonly<Props>, nextContext: any): void {
-        this.setState(() => this.getInitialState(nextProps));
-    }
-
-    confirmEdit = (type: string) => this.setState(
+    public confirmEdit = (type: string) => this.setState(
         ({entityUnderEdit, entities, menu}) => {
             /*
             either we have a new entity or we are updating an existing entity
@@ -93,17 +71,7 @@ export class TextTagger extends React.Component<Props, State> {
             const taggedEntities = this.getTaggedEntities(entities, tokens);
             onChange(tokenToText({entities, tokens}), taggedEntities);
         });
-
-    getTaggedEntities(entities: Entity[], tokens: Token[]) {
-        return entities.map(entity => {
-            return {
-                type: entity.type,
-                value: tokens.slice(entity.start, entity.end + 1).map(token => token.content).join(' ')
-            };
-        });
-    }
-
-    cancelEdit = () => this.setState(({entityUnderEdit}) => {
+    public cancelEdit = () => this.setState(({entityUnderEdit}) => {
         if (!entityUnderEdit) {
             return {entityUnderEdit};
         } else {
@@ -112,14 +80,12 @@ export class TextTagger extends React.Component<Props, State> {
             };
         }
     });
-
-    resolveTokenEntity = (token: Token): Entity | undefined => {
+    public resolveTokenEntity = (token: Token): Entity | undefined => {
         const {idx} = token;
         const {entities} = this.state;
         return entities.find(({start, end}) => idx >= start && idx <= end);
     };
-
-    deleteEntity = () => this.setState(
+    public deleteEntity = () => this.setState(
         ({entityUnderEdit, entities, menu}) => {
             if (!entityUnderEdit) {
                 return {entityUnderEdit, entities, menu};
@@ -143,8 +109,7 @@ export class TextTagger extends React.Component<Props, State> {
             onChange(tokenToText({tokens, entities}), taggedEntities);
         }
     );
-
-    startEntityEdit = (token: Token) => {
+    public startEntityEdit = (token: Token) => {
         const {entityUnderEdit} = this.state;
         if (entityUnderEdit !== undefined) {
             this.cancelEdit();
@@ -170,22 +135,19 @@ export class TextTagger extends React.Component<Props, State> {
             });
         }
     };
-
-    addTokenToEntity = (token: Token) => this.setState(({entityUnderEdit, menu}) => {
+    public addTokenToEntity = (token: Token) => this.setState(({entityUnderEdit, menu}) => {
         if (entityUnderEdit === undefined || menu !== undefined) {
             return {entityUnderEdit};
         }
         return {entityUnderEdit: {...entityUnderEdit, end: Math.max(entityUnderEdit.start, token.idx)}};
     });
-
-    removeTokenFromEntity = (token: Token) => this.setState(({entityUnderEdit, menu}) => {
+    public removeTokenFromEntity = (token: Token) => this.setState(({entityUnderEdit, menu}) => {
         if (entityUnderEdit === undefined || menu !== undefined) {
             return {entityUnderEdit};
         }
         return {entityUnderEdit: {...entityUnderEdit, end: Math.max(entityUnderEdit.start, token.idx - 1)}};
     });
-
-    resolveTokenStyle = (token: Token) => {
+    public resolveTokenStyle = (token: Token) => {
         const baseStyle = {
             padding: `2px`
         };
@@ -242,7 +204,38 @@ export class TextTagger extends React.Component<Props, State> {
         }
     };
 
-    render(): React.ReactNode {
+    constructor(props: Props) {
+        super(props);
+        this.state = this.getInitialState(props);
+    }
+
+    public getInitialState(props: Props) {
+        const {tokens, entities} = textToToken(props.annotatedText);
+        /*
+        populate colors
+         */
+        return {
+            entityUnderEdit: undefined,
+            menu: undefined,
+            entities,
+            tokens
+        };
+    }
+
+    public componentWillReceiveProps(nextProps: Readonly<Props>, nextContext: any): void {
+        this.setState(() => this.getInitialState(nextProps));
+    }
+
+    public getTaggedEntities(entities: Entity[], tokens: Token[]) {
+        return entities.map(entity => {
+            return {
+                type: entity.type,
+                value: tokens.slice(entity.start, entity.end + 1).map(token => token.content).join(' ')
+            };
+        });
+    }
+
+    public render(): React.ReactNode {
         const {corpusDescriptor: {entityConfigurations}} = this.props;
         const {tokens, menu} = this.state;
         const spans = tokens

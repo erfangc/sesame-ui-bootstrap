@@ -1,8 +1,8 @@
 import * as React from 'react';
 import {Route, Switch} from 'react-router';
-import {CorpusEditor} from '../CorpusEditor';
+import {CorpusEditor} from '../corpus/CorpusEditor';
 import {Navbar} from './Navbar';
-import {AllCorpuses} from '../AllCorpuses';
+import {AllCorpuses} from '../corpus/AllCorpuses';
 import {DocumentEditor} from '../documents/DocumentEditor';
 import {StoreState} from '../../reducers';
 import {connect} from 'react-redux';

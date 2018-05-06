@@ -1,9 +1,9 @@
 import * as React from 'react';
-import {Corpus} from '../domain/Corpus';
+import {Corpus} from '../../domain/Corpus';
 import axios from 'axios';
-import {apiRoot} from '../index';
-import {RestResource, WithLink} from '../domain/RestResource';
-import {history} from '../History';
+import {apiRoot} from '../../index';
+import {RestResource, WithLink} from '../../domain/RestResource';
+import {history} from '../../History';
 
 interface State {
     corpuses?: WithLink<Corpus>[]

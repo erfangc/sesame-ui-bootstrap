@@ -2,8 +2,8 @@ import Form, {IChangeEvent} from 'react-jsonschema-form';
 import * as React from 'react';
 import {JSONSchema6} from 'json-schema';
 import axios from 'axios';
-import {apiRoot} from '../index';
-import {history} from '../History';
+import {apiRoot} from '../../index';
+import {history} from '../../History';
 import {RouteProps} from 'react-router';
 import {parse} from 'querystring';
 

@@ -6,7 +6,7 @@ interface LegendProps {
 }
 
 export class Legend extends React.Component<LegendProps> {
-    render(): React.ReactNode {
+    public render(): React.ReactNode {
         const {corpusDescriptor: {entityConfigurations}} = this.props;
         return (
             <div>

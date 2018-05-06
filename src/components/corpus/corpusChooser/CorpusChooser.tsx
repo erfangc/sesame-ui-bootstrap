@@ -1,8 +1,8 @@
 import * as React from 'react';
-import {Corpus} from '../../domain/Corpus';
+import {Corpus} from '../../../domain/Corpus';
 import axios from 'axios';
-import {RestResource} from '../../domain/RestResource';
-import {apiRoot} from '../../index';
+import {RestResource} from '../../../domain/RestResource';
+import {apiRoot} from '../../../index';
 
 interface State {
     corpusDescriptors?: Corpus[]

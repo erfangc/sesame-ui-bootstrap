@@ -4,4 +4,5 @@ export interface NERModel {
     userID: string
     createdOn: string
     fileLocation: string
+    corpus: number
 }

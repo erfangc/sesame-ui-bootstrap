@@ -4,7 +4,7 @@ import {JSONSchema6} from 'json-schema';
 import axios from 'axios';
 import {apiRoot} from '../../index';
 import {history} from '../../History';
-import {RouteProps} from 'react-router';
+import {RouteComponentProps} from 'react-router';
 import {parse} from 'querystring';
 
 interface State {
@@ -27,14 +27,14 @@ const uiSchema = {
     }
 };
 
-export class CorpusEditor extends React.Component<RouteProps, State> {
+export class CorpusEditor extends React.Component<RouteComponentProps<any>, State> {
 
-    constructor(props: RouteProps) {
+    constructor(props: RouteComponentProps<any>) {
         super(props);
         this.state = {};
     }
 
-    public componentWillMount(): void {
+    public componentDidMount(): void {
         axios
             .get<JSONSchema6>(`${apiRoot}/api/v1/profile/corpuses`, {headers: {accept: 'application/schema+json'}})
             .then(({data}) => {

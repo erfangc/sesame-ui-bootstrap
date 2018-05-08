@@ -6,5 +6,6 @@ export interface NERModel {
     userID: string
     createdOn: string
     fileLocation: string
+    modelFilename: string
     corpus: number | Corpus
 }

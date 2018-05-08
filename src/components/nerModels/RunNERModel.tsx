@@ -55,36 +55,32 @@ export const RunNERModel = connect(mapStateToProps)(
             }
             return (
                 <div>
-                    <form className={'form'}>
-                        <label>Enter a Sentence to Run</label>
-                        <input
-                            className={'form-control'}
-                            value={sentence}
-                            onChange={({currentTarget: {value}}) => this.setState(() => ({sentence: value}))}
-                        />
-                    </form>
+                    <h2>Enter a Sentence to Run</h2>
+                    <input
+                        className={'form-control'}
+                        value={sentence}
+                        onChange={({currentTarget: {value}}) => this.setState(() => ({sentence: value}))}
+                    />
                     <br/>
                     <button className={'btn btn-success'} onClick={() => this.run()}>Run</button>
                     <h2>Results</h2>
-                    <div>
-                        <TextTagger corpusDescriptor={corpus} onChange={() => null} annotatedText={result}/>
-                        <Legend corpusDescriptor={corpus}/>
+                    <div className={'panel panel-default'}>
+                        <div className="panel-body">
+                            <TextTagger corpusDescriptor={corpus} onChange={() => null} annotatedText={result}/>
+
+                        </div>
                     </div>
+                    <Legend corpusDescriptor={corpus}/>
                 </div>
             );
         }
 
         private run = () => {
             const {sentence, model} = this.state;
-            const selfLink = getSelfLink(this.props);
-            if (model !== undefined && selfLink) {
-                /*
-                extract ID from url ... kind of a bummer
-                 */
-                const parts = selfLink.split('/');
-                const id = parts[parts.length - 1];
+            if (model !== undefined) {
+                const {modelFilename} = model;
                 axios
-                    .get<string>(`${apiRoot}/api/v1/ner/${id}/run`, {params: {sentence}})
+                    .get<string>(`${apiRoot}/api/v1/ner/${modelFilename}/run`, {params: {sentence}})
                     .then((resp) => this.setState(() => ({result: resp.data})));
             }
         };

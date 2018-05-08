@@ -76,7 +76,10 @@ export const AllNERModels = connect(mapStateToProps)(
                                         </button>
                                     </td>
                                     <td>
-                                        <button className="btn btn-success btn-sm">
+                                        <button
+                                            className="btn btn-success btn-sm"
+                                            onClick={() => history.push(`/workspace/nermodels/run?href=${nerModel._links.self.href}`)}
+                                        >
                                             Run
                                         </button>
                                     </td>

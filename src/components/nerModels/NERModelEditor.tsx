@@ -7,8 +7,8 @@ import {NERModel} from '../../domain/NERModel';
 import {JSONSchema6} from 'json-schema';
 import Form, {ISubmitEvent} from 'react-jsonschema-form';
 import {RouteComponentProps} from 'react-router';
-import {parse} from 'querystring';
 import {history} from '../../History';
+import {getSelfLink} from '../../AppUtils';
 
 interface StateProps {
     corpuses: Corpus[]
@@ -64,19 +64,8 @@ export const NERModelEditor = connect(mapStateToProps)(
             };
         }
 
-        private getSelfLink() {
-            const {location} = this.props;
-            if (location && location.search) {
-                const search = parse(location.search);
-                if (search.href || search['?href']) {
-                    return (search.href || search['?href']).toString();
-                }
-            }
-            return null;
-        }
-
         public componentDidMount(): void {
-            const selfLink = this.getSelfLink();
+            const selfLink = getSelfLink(this.props);
             if (selfLink) {
                 axios
                     .get<NERModel>(selfLink)
@@ -97,7 +86,7 @@ export const NERModelEditor = connect(mapStateToProps)(
         }
 
         private onSubmit = (e: ISubmitEvent<NERModel>) => {
-            const selfLink = this.getSelfLink();
+            const selfLink = getSelfLink(this.props);
             if (selfLink) {
                 axios
                     .put(selfLink, e.formData)

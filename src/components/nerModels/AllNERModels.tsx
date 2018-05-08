@@ -4,6 +4,7 @@ import {RestResource, WithLink} from '../../domain/RestResource';
 import {NERModel} from '../../domain/NERModel';
 import axios from 'axios';
 import {apiRoot} from '../../index';
+import {history} from '../../History';
 
 interface StateProps {
 
@@ -32,6 +33,10 @@ export const AllNERModels = connect(mapStateToProps)(
                 });
         }
 
+        private delete = (href: string) => {
+            axios.delete(href).then(() => this.componentDidMount());
+        };
+
         public render(): React.ReactNode {
             const {nerModels} = this.state;
             return (
@@ -55,12 +60,18 @@ export const AllNERModels = connect(mapStateToProps)(
                                     <td>{nerModel.description}</td>
                                     <td>{new Date(nerModel.createdOn).toLocaleString()}</td>
                                     <td>
-                                        <button className="btn btn-warning btn-sm">
+                                        <button
+                                            className="btn btn-warning btn-sm"
+                                            onClick={() => history.push(`/workspace/nermodels/edit?href=${nerModel._links.self.href}`)}
+                                        >
                                             Edit
                                         </button>
                                     </td>
                                     <td>
-                                        <button className="btn btn-danger btn-sm">
+                                        <button
+                                            className="btn btn-danger btn-sm"
+                                            onClick={() => this.delete(nerModel._links.self.href)}
+                                        >
                                             Delete
                                         </button>
                                     </td>
@@ -75,7 +86,12 @@ export const AllNERModels = connect(mapStateToProps)(
                         </tbody>
                     </table>
                     <br/>
-                    <button className="btn btn-success">Create</button>
+                    <button
+                        className="btn btn-success"
+                        onClick={() => history.push('/workspace/nermodels/train')}
+                    >
+                        Create
+                    </button>
                 </div>
             );
         }

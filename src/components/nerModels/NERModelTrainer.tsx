@@ -39,7 +39,15 @@ export const NERModelTrainer = connect(mapStateToProps)(
         public componentDidMount(): void {
             axios
                 .get<JSONSchema6>(`${apiRoot}/api/v1/profile/nermodels`, {headers: {accept: 'application/schema+json'}})
-                .then(({data}) => this.setState({schema: data}));
+                .then(({data}) => this.setState({
+                    schema: {
+                        ...data, required: [
+                            'name',
+                            'description',
+                            'corpus'
+                        ]
+                    }
+                }));
             const {location} = this.props;
             if (location && location.search) {
                 const parsed = parse(location.search);

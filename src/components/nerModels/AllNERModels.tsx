@@ -47,6 +47,7 @@ export const AllNERModels = connect(mapStateToProps)(
                             <th>Name</th>
                             <th>Description</th>
                             <th>Created On</th>
+                            <th>Status</th>
                             <th/>
                             <th/>
                             <th/>
@@ -59,6 +60,7 @@ export const AllNERModels = connect(mapStateToProps)(
                                     <td>{nerModel.name}</td>
                                     <td>{nerModel.description}</td>
                                     <td>{new Date(nerModel.createdOn).toLocaleString()}</td>
+                                    <td>{nerModel.status}</td>
                                     <td>
                                         <button
                                             className="btn btn-warning btn-sm"

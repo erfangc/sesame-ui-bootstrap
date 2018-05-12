@@ -4,6 +4,7 @@ export interface NERModel {
     name: string
     description: string
     userID: string
+    status: string
     createdOn: string
     fileLocation: string
     modelFilename: string

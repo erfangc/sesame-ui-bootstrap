@@ -13,7 +13,10 @@ interface State {
 }
 
 const uiSchema = {
-    'ui:order': ['title', 'entityConfigurations'],
+    'ui:order': ['id', 'title', 'entityConfigurations'],
+    'id': {
+       'ui:disabled': true
+    },
     'entityConfigurations': {
         items: {
             'ui:order': ['type', 'displayName', 'color', 'textColor'],

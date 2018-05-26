@@ -65,7 +65,7 @@ export const AllDocuments = connect(mapStateToProps)(
             }
             return (
                 <div>
-                    <CorpusChooser onChange={this.setActiveCorpusID} corpusID={activeCorpusID} standalone/>
+                    <CorpusChooser onChange={corpus => this.setActiveCorpusID(corpus)} corpusID={activeCorpusID} standalone/>
                     <br/>
                     {
                         loading ? (<div className={'container'}><h1>Loading...</h1></div>) :

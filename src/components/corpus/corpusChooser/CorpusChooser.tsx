@@ -44,11 +44,16 @@ export class CorpusChooser extends React.Component<OwnProps, State> {
         const formField = (
             <React.Fragment>
                 <label>{label || 'Corpus'}</label>
-                <select className="form-control" value={value} disabled={disabled} onChange={() => null}>
+                <select
+                    className="form-control"
+                    value={value}
+                    disabled={disabled}
+                    onChange={({target: {value}}) => this.changeCorpus(parseFloat(value))}
+                >
                     {
                         options
                             .map(({value, text, key}, idx) =>
-                                <option key={idx} onClick={() => this.changeCorpus(value)}>{text}</option>
+                                <option key={idx} value={value}>{text}</option>
                             )
                     }
                 </select>

@@ -78,6 +78,9 @@ export const NERModelTrainer = connect(mapStateToProps)(
                 'modelFilename': {
                     'ui:disabled': true
                 },
+                'status': {
+                    'ui:disabled': true
+                },
                 'corpus': {}
             };
             const enhancedSchema: any = {

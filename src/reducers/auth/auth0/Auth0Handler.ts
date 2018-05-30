@@ -32,22 +32,27 @@ whenever the App loads, we could be in 1 or 3 situations
  */
 export function initAuth(store: Store<StoreState>) {
     if (history.location.pathname === '/callback') {
+        // process the callback URL, meaning authentication was just completed by the auth provider
         auth0Instance.parseHash((err, authResult) => {
             if (err) {
                 console.error(err);
             } else if (authResult && authResult.accessToken && authResult.idToken) {
-                setLocalStorage(authResult);
-                store.dispatch(authenticateSuccess({
-                    accessToken: authResult.accessToken,
-                    expiresAt: authResult.expiresIn,
-                    idToken: authResult.idToken
-                }));
-                runPostAuthSequence(authResult.accessToken);
-                history.push('/');
+                // since the user has just been authenticated we store his id and accessTokens + expiration
+                const {expiresAt = null, idToken = null, accessToken = null} = setLocalStorage(authResult) || {};
+                if (expiresAt && idToken && accessToken) {
+                    store.dispatch(authenticateSuccess({
+                        accessToken: accessToken,
+                        expiresAt: expiresAt,
+                        idToken: idToken
+                    }));
+                    runPostAuthSequence(authResult.accessToken);
+                    history.push('/');
+                } else {
+                    // something went wrong
+                }
             }
         });
     } else if (isAuthenticated()) {
-        // using setTimeout as the store may not be initialized yet
         const accessToken = localStorage.getItem('access_token');
         const idToken = localStorage.getItem('id_token');
         const expiresAt = localStorage.getItem('expires_at');
@@ -113,7 +118,7 @@ function setLocalStorage({idToken, expiresIn, accessToken}: Auth0DecodedHash) {
     return {
         accessToken: accessToken,
         idToken: idToken,
-        expiresAt: expiresIn
+        expiresAt: expiresAt
     };
 }
 

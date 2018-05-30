@@ -5,7 +5,7 @@ import {history} from './History';
 import {connect} from 'react-redux';
 import {AuthStore} from './reducers/auth/authReducer';
 import {StoreState} from './reducers';
-import {DispatchProps} from './reducers/actions';
+import {actions, DispatchProps} from './reducers/actions';
 
 interface StateProps {
     auth: AuthStore
@@ -17,11 +17,12 @@ function mapStateToProps({auth}: StoreState): StateProps {
     };
 }
 
-export const LandingPage = connect(mapStateToProps)(
+export const LandingPage = connect(mapStateToProps, {...actions})(
     class LandingPage extends Component<StateProps & DispatchProps> {
         render(): React.ReactNode {
             const {logout, auth: {expiresAt}} = this.props;
             let isLoggedIn = new Date().getTime() < expiresAt;
+            console.log(expiresAt);
             return (
                 <div className="jumbotron jumbotron-fluid">
                     <div className="container">

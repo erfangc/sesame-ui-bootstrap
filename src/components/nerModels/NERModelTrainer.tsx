@@ -80,8 +80,7 @@ export const NERModelTrainer = connect(mapStateToProps)(
                 },
                 'status': {
                     'ui:disabled': true
-                },
-                'corpus': {}
+                }
             };
             const enhancedSchema: any = {
                 ...schema,
@@ -90,8 +89,8 @@ export const NERModelTrainer = connect(mapStateToProps)(
                     corpus: {
                         title: 'Corpus',
                         type: 'number',
-                        enum: [corpuses.map(({id}) => id)],
-                        enumNames: [corpuses.map(({title}) => title)]
+                        enum: corpuses.map(({id}) => id),
+                        enumNames: corpuses.map(({title}) => title)
                     }
                 }
             };

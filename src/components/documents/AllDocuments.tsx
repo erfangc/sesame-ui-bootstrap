@@ -77,6 +77,7 @@ export const AllDocuments = connect(mapStateToProps)(
             if (!corpuses) {
                 return null;
             }
+            const {page} = this.state;
             return (
                 <div>
                     <CorpusChooser onChange={corpus => this.setActiveCorpusID(corpus)} corpusID={activeCorpusID}
@@ -128,15 +129,41 @@ export const AllDocuments = connect(mapStateToProps)(
                     <div className="row">
                         <div className="col-md-2">
                             <label>Page - Total {this.state.totalPages}</label>
-                            <input
-                                className={'form-control'}
-                                value={this.state.page}
-                                onChange={({target: {value}}) => {
-                                    const page = parseFloat(value);
-                                    this.setState({page: isNaN(page) ? 1 : page});
-                                }}
-                                onBlur={() => this.refreshDocumentsForCorpusID(this.state.activeCorpusID)}
-                            />
+                            <form className={'form-inline'}>
+                                <div className="input-group">
+                                    <input
+                                        className={'form-control-sm'}
+                                        value={page}
+                                        onChange={({target: {value}}) => {
+                                            const page = parseFloat(value);
+                                            this.setState({page: isNaN(page) ? 1 : page});
+                                        }}
+                                        onBlur={() => this.refreshDocumentsForCorpusID(this.state.activeCorpusID)}
+                                    />
+                                    <button
+                                        className={'btn btn-primary btn-sm'}
+                                        disabled={page === 1}
+                                        onClick={e => {
+                                            e.preventDefault();
+                                            this.setState({page: page - 1},
+                                                () => this.refreshDocumentsForCorpusID(this.state.activeCorpusID));
+                                        }}
+                                    >
+                                        Prev
+                                    </button>
+                                    <button
+                                        className={'btn btn-primary btn-sm'}
+                                        disabled={page === this.state.totalPages}
+                                        onClick={e => {
+                                            e.preventDefault();
+                                            this.setState({page: page + 1},
+                                                () => this.refreshDocumentsForCorpusID(this.state.activeCorpusID));
+                                        }}
+                                    >
+                                        Next
+                                    </button>
+                                </div>
+                            </form>
                         </div>
                     </div>
                     <br/><br/>

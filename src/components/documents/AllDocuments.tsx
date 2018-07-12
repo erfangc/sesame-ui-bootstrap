@@ -14,6 +14,8 @@ interface StateProps {
 }
 
 interface State {
+    page: number,
+    totalPages: number,
     loading?: boolean
     activeCorpusID: number
     documents?: Document[]
@@ -21,6 +23,11 @@ interface State {
 
 function mapStateToProps({corpusStore: {corpusDescriptors}}: StoreState): StateProps {
     return {corpuses: corpusDescriptors};
+}
+
+interface SearchCorpusResponse {
+    documents: Document[]
+    totalPages: number
 }
 
 export const AllDocuments = connect(mapStateToProps)(
@@ -33,6 +40,8 @@ export const AllDocuments = connect(mapStateToProps)(
         constructor(props: StateProps) {
             super(props);
             this.state = {
+                page: 1,
+                totalPages: 0,
                 activeCorpusID: props.corpuses[0].id
             };
         }
@@ -51,69 +60,90 @@ export const AllDocuments = connect(mapStateToProps)(
 
             the delay is really on the millisecond level though but still
              */
-            axios.get<Document[]>(`${apiRoot}/api/v1/documents/by-corpus/${corpusID}`)
-                .then(resp => this.setState({documents: resp.data, loading: false}))
+            const {page} = this.state;
+            axios.get<SearchCorpusResponse>(`${apiRoot}/api/v1/documents/by-corpus/${corpusID}`, {params: {page}})
+                .then(resp => this.setState({
+                    documents: resp.data.documents,
+                    loading: false,
+                    totalPages: resp.data.totalPages
+                }))
                 .catch(() => this.setState({loading: false}));
 
         }
 
         public render(): React.ReactNode {
             const {corpuses} = this.props;
-            const {documents, activeCorpusID, loading} = this.state;
+            const {documents, activeCorpusID} = this.state;
             if (!corpuses) {
                 return null;
             }
             return (
                 <div>
-                    <CorpusChooser onChange={corpus => this.setActiveCorpusID(corpus)} corpusID={activeCorpusID} standalone/>
+                    <CorpusChooser onChange={corpus => this.setActiveCorpusID(corpus)} corpusID={activeCorpusID}
+                                   standalone/>
                     <br/>
                     {
-                        loading ? (<div className={'container'}><h1>Loading...</h1></div>) :
-                            <table className={'table'}>
-                                <thead>
-                                <tr>
-                                    <th>Content</th>
-                                    <th>Creator</th>
-                                    <th>Created On</th>
-                                    <th>Last Modified By</th>
-                                    <th>Last Modified</th>
-                                    <th/>
-                                    <th/>
-                                </tr>
-                                </thead>
-                                <tbody>
-                                {
-                                    (documents || []).map(document => (
-                                        <tr key={document.id}>
-                                            <td>{stripNERAnnotations(document.content)}</td>
-                                            <td>{document.creatorEmail}</td>
-                                            <td>{new Date(document.createdOn).toLocaleString()}</td>
-                                            <td>{document.lastModifiedUserEmail}</td>
-                                            <td>{new Date(document.lastModifiedOn).toLocaleString()}</td>
-                                            <td>
-                                                <button
-                                                    className="btn btn-warning btn-sm"
-                                                    onClick={() => history.push(`/workspace/documents/edit/${document.id}`)}
-                                                >
-                                                    Edit
-                                                </button>
-                                            </td>
-                                            <td>
-                                                <button
-                                                    className="btn btn-danger btn-sm"
-                                                    onClick={() => this.deleteDocument(document.id)}
-                                                >
-                                                    Delete
-                                                </button>
-                                            </td>
-                                        </tr>
-                                    ))}
-                                </tbody>
-                            </table>
+                        <table className={'table'}>
+                            <thead>
+                            <tr>
+                                <th>Content</th>
+                                <th>Creator</th>
+                                <th>Created On</th>
+                                <th>Last Modified By</th>
+                                <th>Last Modified</th>
+                                <th/>
+                                <th/>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {
+                                (documents || []).map(document => (
+                                    <tr key={document.id}>
+                                        <td>{stripNERAnnotations(document.content)}</td>
+                                        <td>{document.creatorEmail}</td>
+                                        <td>{new Date(document.createdOn).toLocaleString()}</td>
+                                        <td>{document.lastModifiedUserEmail}</td>
+                                        <td>{new Date(document.lastModifiedOn).toLocaleString()}</td>
+                                        <td>
+                                            <button
+                                                className="btn btn-warning btn-sm"
+                                                onClick={() => history.push(`/workspace/documents/edit/${document.id}`)}
+                                            >
+                                                Edit
+                                            </button>
+                                        </td>
+                                        <td>
+                                            <button
+                                                className="btn btn-danger btn-sm"
+                                                onClick={() => this.deleteDocument(document.id)}
+                                            >
+                                                Delete
+                                            </button>
+                                        </td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
                     }
-                    <br/>
-                    <button className="btn btn-success"
-                            onClick={() => history.push('/workspace/documents/edit')}>Create
+                    <div className="row">
+                        <div className="col-md-2">
+                            <label>Page - Total {this.state.totalPages}</label>
+                            <input
+                                className={'form-control'}
+                                value={this.state.page}
+                                onChange={({target: {value}}) => {
+                                    const page = parseFloat(value);
+                                    this.setState({page: isNaN(page) ? 1 : page});
+                                }}
+                                onBlur={() => this.refreshDocumentsForCorpusID(this.state.activeCorpusID)}
+                            />
+                        </div>
+                    </div>
+                    <br/><br/>
+                    <button
+                        className="btn btn-success"
+                        onClick={() => history.push('/workspace/documents/edit')}
+                    >Create
                     </button>
                 </div>
             );
